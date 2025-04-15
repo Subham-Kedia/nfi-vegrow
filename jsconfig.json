@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": false,
+    "baseUrl": "src",
+    "paths": {
+      "Components": ["./components"],
+      "Components/*": ["./components/*"],
+      "App": ["./app"],
+      "App/*": ["./app/*"],
+      "Pages": ["./pages"],
+      "Pages/*": ["./pages/*"],
+      "Hooks": ["./hooks"],
+      "Hooks/*": ["./hooks/*"],
+      "Utilities": ["./utilities"],
+      "Utilities/*": ["./utilities/*"],
+      "Constants": ["./utilities/constants"],
+      "Constants/*": ["./utilities/constants/*"],
+      "Services": ["./services"],
+      "Services/*": ["./services/*"],
+      "Routes": ["./routes"],
+      "Routes/*": ["./routes/*"]
+    }
+  },
+  "exclude": ["node_modules", "**/node_modules/*"],
+  "include": ["src"]
+}

@@ -1,0 +1,9 @@
+FROM node:18.12.0 as nfi-frontend
+WORKDIR /app
+COPY package.json .
+RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+RUN --mount=type=ssh id=github \
+    yarn
+COPY . .
+EXPOSE 9000
+CMD ["yarn", "start"]

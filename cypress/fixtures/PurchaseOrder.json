@@ -1,0 +1,70 @@
+{
+  "username": "nfiuser1@gmail.com",
+  "password": "test123",
+  "uploadFile": "./cypress/fixtures/test.png",
+  "addPurchaseOderHeader": "Add Purchase Order",
+  "PURCHASE_ORDER": 1,
+  "OPEN_PURCHASE_ORDER": 2,
+  "vendor": "Test Supplier",
+  "otherQuotationVendor": "Test Farmer",
+  "deliveryLocation": "Chennai",
+  "billToLocation": "Chennai",
+  "sameVendorQuotationMessage": "PO cannot have multiple quotations from same vendor",
+  "packagingItem": ["IT/PO/APL-YML/HDCRATE", "IT/PO/APL-YML/SHEET"],
+  "marketUom": "Bundle",
+  "systemUom": "Nos",
+  "conversionRate": 5,
+  "rate": [5, 10],
+  "zeroRate": 0,
+  "negativeQuantity": -1,
+  "gst": ["5%", "12%"],
+  "quantity": [10, 20],
+  "paymentTerms": "Automation",
+  "comments": "Automation",
+  "poCreationMessage": "PO created successfully",
+  "poEditMessage": "PO Updated successfully",
+  "zeroNegativeText": "Value should be greater than 0",
+  "bannerAlertMessage": "Please reload the page after adding vendor on CRM.",
+  "poApproveMessage": "PO Approved successfully",
+  "method": "POST",
+  "updateMethod": "PUT",
+  "getMethod": "GET",
+  "createPOAlias": "createPO",
+  "approvePOAlias": "approvePO",
+  "olderPurchaseDate": "Validation failed: Purchase date cannot be older than 1 days.",
+  "futurePurchaseDate": "Validation failed: Purchase date cannot be a future date.",
+  "header": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "Authorization": "",
+    "dcid": 1
+  },
+  "loginEndpoint": "/login",
+  "payload": {
+    "purchase_order": {
+      "purchase_items": [
+        {
+          "purchase_entity_id": 2,
+          "purchase_entity_type": "Nfi::PackagingItem",
+          "quantity": 1,
+          "gst": -1,
+          "agreed_value": 1,
+          "uom_name": "Nos",
+          "uom_type": "System"
+        }
+      ],
+      "purchase_date": 1729017000000,
+      "expected_delivery_date": 1729017000000,
+      "comments": null,
+      "payment_terms": "test",
+      "quotations": [],
+      "po_type": 1,
+      "user_id": 1,
+      "partner_id": 1,
+      "delivery_dc_id": 1,
+      "status": "Draft",
+      "billto_location_id": 1,
+      "quotation_l1": ""
+    }
+  }
+}

@@ -1,0 +1,13 @@
+node_modules/
+npm-debug.log
+package-lock.json
+yarn.lock
+.DS_Store
+/dist
+cypress/reports/
+cypress/screenshots/
+cypress/videos/
+# IntelliJ
+*.iml
+/.idea
+coverage/

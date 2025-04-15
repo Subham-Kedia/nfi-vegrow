@@ -1,0 +1,165 @@
+name: 'NFI UI Automation'
+
+on:
+  pull_request:
+    branches: ['master', 'develop']
+    types:
+      - opened
+      - synchronize
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: '0 1 * * 1-5'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set Timezone
+        uses: szenius/set-timezone@v1.2
+        with:
+          timezoneLinux: 'Asia/Kolkata'
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          ssh -Tvvv git@github.com || true
+        env:
+          SSH_PRIVATE_KEY: '${{ secrets.SSH_PRIVATE_KEY }}'
+
+      - name: Login to AWS ECR
+        run: |
+          export AWS_ACCESS_KEY_ID="${{ secrets.AWS_ACCESS_KEY_ID }}"
+          export AWS_SECRET_ACCESS_KEY="${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          export AWS_DEFAULT_REGION="${{ secrets.AWS_DEFAULT_REGION }}"
+          export AWS_DEFAULT_OUTPUT=json
+          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 107389626891.dkr.ecr.ap-south-1.amazonaws.com
+
+      - name: Create Docker Network
+        run: |
+          docker network create --driver bridge velynk-network || echo "Network already exists"
+
+      - name: Checkout Migrator
+        uses: actions/checkout@v3
+        with:
+          repository: Vegrow-Tech/migrator
+          ref: refs/heads/develop
+          path: migrator
+          token: ${{ secrets.NFI_WORKFLOW }}
+
+      - name: Start Migrator
+        run: |
+          cd ${GITHUB_WORKSPACE}/migrator
+          export MYSQL_DATABASE=chifupartners_test
+          export MYSQL_USER=user
+          export MYSQL_PASSWORD=pwd
+          export MYSQL_ROOT_PASSWORD=pwd
+          export RAILS_ENV=test
+          export TEST_UNAME=root
+          export TEST_HOST=db
+          export TEST_PWD=pwd
+          export DOCKER_BUILDKIT=1
+          docker compose -f docker-compose-test.yml up -d db
+          sleep 10
+          docker compose -f docker-compose-test.yml up migrator
+
+      - name: Checkout Backend
+        uses: actions/checkout@v3
+        with:
+          repository: Vegrow-Tech/velynk
+          ref: refs/heads/develop
+          path: backend
+          token: ${{ secrets.NFI_WORKFLOW }}
+
+      - name: Start Backend
+        run: |
+          cd ${{ github.workspace }}/backend
+          export MYSQL_DATABASE=chifupartners_test
+          export MYSQL_USER=user
+          export MYSQL_PASSWORD=pwd
+          export MYSQL_ROOT_PASSWORD=pwd
+          export RAILS_ENV=test
+          export TEST_UNAME=root
+          export TEST_HOST=db
+          export TEST_PWD=pwd
+          export INTUGENE_USER_NAME=vegrow_api_test
+          export INTUGENE_PASSWORD=vgrow_api_test@123
+          export FARMER_DATA_USERNAME=''
+          export FARMER_DATA_PASSWORD=''
+          export AWS_S3_KYC_BUCKET='test-kyc-bucket'
+          export DOCKER_BUILDKIT=1
+          docker compose -f docker-compose-nfitest.yml up -d velynk
+
+      - name: Port Running Verification
+        run: |
+          sleep 15
+          docker ps
+
+      - name: Checkout NFI Frontend for PR
+        if: ${{ github.event_name != 'schedule' }}
+        uses: actions/checkout@v3
+        with:
+          repository: Vegrow-Tech/non-fruit-frontend
+          ref: ${{ github.ref }}
+          path: frontend
+          token: ${{ secrets.NFI_WORKFLOW }}
+
+      - name: Checkout NFI Frontend for Schedule
+        if: ${{ github.event_name == 'schedule' }}
+        uses: actions/checkout@v3
+        with:
+          repository: Vegrow-Tech/non-fruit-frontend
+          ref: refs/heads/develop
+          path: frontend
+          token: ${{ secrets.NFI_WORKFLOW }}
+
+      - name: Install Node.js v18.12.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: v18.12.0
+
+      - name: Start Frontend
+        run: |
+          cd ${{ github.workspace }}/frontend
+          export APP_ENV=development
+          export PORT=9000
+          yarn install
+          yarn start &
+          sleep 30
+
+      - name: Verify Frontend Port
+        run: |
+          lsof -i :9000 && echo "Frontend service is running on port 9000" || echo "Frontend not running on port 9000"
+
+      - name: Cypress Run
+        if: ${{ success() }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+        run: |
+          cd ${{ github.workspace }}/frontend
+          npx cypress run
+
+      # - name: Upload Video Artifacts
+      #   uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: Videos
+      #     path: ${{ github.workspace }}/frontend/cypress/videos
+
+      - name: Slack Notification
+        if: always()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_COLOR: ${{ job.status }}
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: ${{ env.REPORT_URL }}
+          SLACK_TITLE: NFI-UI Test Report
+          SLACK_USERNAME: GitHub Actions
+          SLACK_WEBHOOK: 'https://hooks.slack.com/services/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'

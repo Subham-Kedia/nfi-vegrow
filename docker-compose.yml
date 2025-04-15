@@ -1,0 +1,25 @@
+# docker-compose up -d  (start container)
+# docker-compose down (close container)
+# Pass the SSH agent socket to the build process (ssh: default: $SSH_AUTH_SOCK)
+# Pass the SSH agent socket to the container for secure SSH connections (- SSH_AUTH_SOCK=$SSH_AUTH_SOCK)
+# Generate SSH Keyeval $(ssh-keygen -t rsa -b 4096 -C "your_email@example.com")
+# Add the SSH key to your SSH agent (eval "$(ssh-agent -s)") (ssh-add ~/.ssh/id_rsa)
+
+version: '3.4'
+services:
+  frontend:
+    stdin_open: true
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - APP_ENV=production
+      ssh:
+        default: $SSH_AUTH_SOCK
+    expose:
+      - 9000
+    ports:
+      - 9000:80
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - SSH_AUTH_SOCK=$SSH_AUTH_SOCK

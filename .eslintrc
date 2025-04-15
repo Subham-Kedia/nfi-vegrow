@@ -1,0 +1,156 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "airbnb",
+    "prettier",
+    "plugin:jsx-a11y/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:react/jsx-runtime",
+  ],
+  "plugins": ["react", "prettier", "jsx-a11y", "simple-import-sort"],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "generators": true,
+    },
+  },
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jest": true,
+    "node": true,
+  },
+  "settings": {
+    "import/ignore": [
+      "node_modules",
+      "\\.(json|css|jpg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm)$",
+    ],
+    "import/extensions": [".js"],
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".json"],
+      },
+      "webpack": {
+        "config": "build/webpack.dev.js",
+      },
+    },
+    "react": {
+      "version": "18.2.0",
+    },
+  },
+  "globals": {
+    "window": true,
+    "document": true,
+    "localStorage": true,
+    "FormData": true,
+    "FileReader": true,
+    "Blob": true,
+    "navigator": true,
+    "ENV": true,
+    "APP_VERSION": true,
+    "OLD_SITE_URL": true,
+    "API": true,
+    "PUBLIC_URL": true,
+  },
+  "rules": {
+    "react/jsx-filename-extension": [
+      1,
+      {
+        "extensions": [".js", ".jsx"],
+      },
+    ],
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["test-utils"],
+      },
+    ],
+    "react/jsx-props-no-spreading": 0,
+    "react/forbid-prop-types": 0,
+    "no-console": "off",
+    "camelcase": "off",
+    "react/prop-types": 0,
+    "no-underscore-dangle": 0,
+    "import/imports-first": ["error", "absolute-first"],
+    "import/newline-after-import": "error",
+    "prettier/prettier": "error",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": ["src/data/*.js", "**/*.story.js", "**/*.test.js"],
+      },
+    ],
+    "jsx-a11y/click-events-have-key-events": 0,
+    "jsx-a11y/no-noninteractive-element-interactions": "warn",
+    "jsx-a11y/anchor-is-valid": "off",
+    "react/no-unescaped-entities": ["off"],
+    "simple-import-sort/imports": "error",
+    "simple-import-sort/exports": "error",
+    "jsx-a11y/alt-text": "warn",
+    "import/first": "error",
+    "import/no-duplicates": "error",
+    "import/prefer-default-export": "off",
+    "react/destructuring-assignment": "off",
+    "react/no-array-assignment": "off",
+    "react/jsx-no-duplicate-props": "off",
+    "react/require-default-props": "off",
+    "react/jsx-key": "warn",
+    "no-unused-vars": [
+      "error",
+      { "vars": "all", "args": "after-used", "ignoreRestSiblings": false },
+    ],
+    "no-unused-expressions": "warn",
+    "react/no-array-index-key": "off",
+    "no-nested-ternary": 0,
+    "no-param-reassign": 0,
+    "no-undef": 2,
+    "no-use-before-define": "off",
+    "consistent-return": "off",
+    "no-restricted-globals": "off",
+    "no-shadow": "off",
+    "react/display-name": "off",
+    "no-return-assign": "warn",
+    "no-return-await": "warn",
+    "eqeqeq": "warn",
+    "prefer-destructuring": "warn",
+    "react/function-component-definition": "off",
+    "arrow-body-style": "off",
+    "react/jsx-no-constructed-context-values": "off",
+    "react/jsx-no-useless-fragment": "warn",
+    "no-unsafe-optional-chaining": "warn",
+    "react/no-unstable-nested-components": "off",
+    "no-prototype-builtins": "off",
+    "no-restricted-syntax": "off",
+  },
+  "overrides": [
+    {
+      "files": ["*.js", "*.jsx", "*.ts", "*.tsx"],
+      "rules": {
+        "simple-import-sort/imports": [
+          "error",
+          {
+            "groups": [
+              // Packages `react` related packages come first.
+              ["^react", "^@?\\w"],
+              // Internal packages.
+              ["^(@|components)(/.*|$)"],
+              // Side effect imports.
+              ["^\\u0000"],
+              // Parent imports. Put `..` last.
+              ["^\\.\\.(?!/?$)", "^\\.\\./?$"],
+              // Other relative imports. Put same-folder imports and `.` last.
+              ["^\\./(?=.*/)(?!/?$)", "^\\.(?!/?$)", "^\\./?$"],
+              // Style imports.
+              ["^.+\\.?(css)$"],
+            ],
+          },
+        ],
+      },
+    },
+  ],
+}

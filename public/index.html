@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="preconnect" href="//fonts.googleapis.com" />
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=5, minimum-scale=1"
+    />
+    <meta http-equiv="ScreenOrientation" content="autoRotate:disabled" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>SupplyChain</title>
+    <meta name="google" content="notranslate" />
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="description" content="SupplyChain app" />
+    <link
+      rel="manifest"
+      href="<%= htmlWebpackPlugin.options.baseUrl %>manifest.json"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      href="<%= htmlWebpackPlugin.options.baseUrl %>icons/favicon.ico"
+    />
+    <link
+      rel="apple-touch-icon"
+      type="image/png"
+      href="<%= htmlWebpackPlugin.options.baseUrl %>icons/icon-192x192.png"
+    />
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+    <link
+      rel="preload"
+      href="https://fonts.googleapis.com/css?family=Noto+Sans:400,700&display=swap"
+      as="font"
+      crossorigin
+    />
+    <script>
+      if (window.location.origin === 'https://nfi.vegrow.in') {
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.async = true;
+        script.src = '/newRelicScript.js';
+        document.head.appendChild(script);
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <div id="portal"></div>
+    <noscript> You need to enable JavaScript to run this app. </noscript>
+  </body>
+</html>
